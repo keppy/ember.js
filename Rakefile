@@ -90,7 +90,7 @@ namespace :release do
     task :build => "dist/starter-kit.#{Ember::VERSION}.zip"
 
     desc "Prepare starter-kit for release"
-    task :prepare => []
+    task :prepare => [:clean, :build]
 
     desc "Release starter-kit"
     task :deploy => [:build, :update]
@@ -143,7 +143,7 @@ namespace :release do
     end
 
     desc "Prepare website for release"
-    task :prepare => []
+    task :prepare => [:update]
 
     desc "Update website repo"
     task :deploy => [:update]
@@ -167,6 +167,6 @@ task :publish_build do
 end
 
 task :clean => "ember:clean"
-task :dist => "ember:dist"
+task :dist => [:clean, "ember:dist"]
 task :test, [:suite] => "ember:test"
 task :default => "ember:test"
