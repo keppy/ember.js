@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/emberjs/ember-dev.git
-  revision: 9d286fd9d992b7f20a44b947fb251a09b3aff746
+  revision: b385cc1f6ef56ff5a120b5768a0e3a1259a94cf1
   branch: master
   specs:
     ember-dev (0.1)
@@ -26,36 +26,36 @@ GIT
 PATH
   remote: .
   specs:
-    ember-source (1.0.0.rc5)
-      handlebars-source (= 1.0.0.rc4)
+    ember-source (1.0.0.rc6)
+      handlebars-source (= 1.0.12)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    aws-sdk (1.11.0)
+    aws-sdk (1.11.3)
       json (~> 1.4)
-      nokogiri (>= 1.4.4)
+      nokogiri (< 1.6.0)
       uuidtools (~> 2.1)
     colored (1.2)
     diff-lcs (1.2.4)
     execjs (1.4.0)
       multi_json (~> 1.0)
-    ffi (1.8.1)
+    ffi (1.9.0)
     grit (2.5.0)
       diff-lcs (~> 1.1)
       mime-types (~> 1.15)
       posix-spawn (~> 0.3.6)
-    handlebars-source (1.0.0.rc4)
+    handlebars-source (1.0.12)
     json (1.8.0)
     kicker (2.6.1)
       listen
-    listen (1.1.4)
+    listen (1.2.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
     mime-types (1.23)
-    multi_json (1.7.4)
-    nokogiri (1.5.9)
+    multi_json (1.7.7)
+    nokogiri (1.5.10)
     posix-spawn (0.3.6)
     rack (1.5.2)
     rake (10.0.4)

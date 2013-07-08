@@ -12,7 +12,8 @@ module("ember-views/views/container_view_test", {
 test("should be able to insert views after the DOM representation is created", function() {
   container = Ember.ContainerView.create({
     classNameBindings: ['name'],
-    name: 'foo'
+    name: 'foo',
+    container: {}
   });
 
   Ember.run(function() {
@@ -29,6 +30,8 @@ test("should be able to insert views after the DOM representation is created", f
     container.pushObject(view);
   });
 
+  equal(view.container, container.container, 'view gains its containerViews container');
+  equal(view._parentView, container, 'view\'s _parentView is the container');
   equal(Ember.$.trim(container.$().text()), "This is my moment");
 
   Ember.run(function(){
@@ -108,6 +111,29 @@ test("should set the parentView property on views that are added to the child vi
     secondView.destroy();
     thirdView.destroy();
     fourthView.destroy();
+  });
+});
+
+test("should trigger parentViewDidChange when parentView is changed", function() {
+  container = Ember.ContainerView.create();
+
+  var secondContainer = Ember.ContainerView.create();
+  var parentViewChanged = 0;
+
+  var View = Ember.View.extend({
+    parentViewDidChange: function() { parentViewChanged++; }
+  });
+
+  view = View.create();
+
+  container.pushObject(view);
+  container.removeChild(view);
+  secondContainer.pushObject(view);
+
+  equal(parentViewChanged, 3);
+
+  Ember.run(function() {
+    secondContainer.destroy();
   });
 });
 
@@ -581,20 +607,19 @@ test("Child view can only be added to one container at a time", function () {
     container.set('currentView', view);
   });
 
-  throws(function() {
+  expectAssertion(function(){
     Ember.run(function() {
-        secondContainer.set('currentView', view);
+      secondContainer.set('currentView', view);
     });
   });
 
-  throws(function() {
+  expectAssertion(function(){
     Ember.run(function() {
-        secondContainer.pushObject(view);
+      secondContainer.pushObject(view);
     });
   });
 
   Ember.run(function() {
     secondContainer.destroy();
   });
-
 });

@@ -102,7 +102,7 @@ Ember.run = function(target, method) {
     May be a function or a string. If you pass a string
     then it will be looked up on the passed target.
   @param {Object} [args*] Any additional arguments you wish to pass to the method.
-  @return {Object} return value from invoking the passed function. Please note, 
+  @return {Object} return value from invoking the passed function. Please note,
   when called within an existing loop, no return value is possible.
 */
 Ember.run.join = function(target, method) {
@@ -238,7 +238,9 @@ Ember.run.cancelTimers = function () {
   @return {void}
 */
 Ember.run.sync = function() {
-  backburner.currentInstance.queues.sync.flush();
+  if (backburner.currentInstance) {
+    backburner.currentInstance.queues.sync.flush();
+  }
 };
 
 /**
@@ -304,7 +306,7 @@ Ember.run.once = function(target, method) {
     var sayHi = function() { console.log('hi'); }
     Ember.run.scheduleOnce('afterRender', myContext, sayHi);
     Ember.run.scheduleOnce('afterRender', myContext, sayHi);
-    // doFoo will only be executed once, in the afterRender queue of the RunLoop
+    // sayHi will only be executed once, in the afterRender queue of the RunLoop
   });
   ```
 
@@ -429,6 +431,38 @@ Ember.run.next = function() {
 */
 Ember.run.cancel = function(timer) {
   return backburner.cancel(timer);
+};
+
+/**
+  Execute the passed method in a specified amount of time, reset timer
+  upon additional calls.
+
+  ```javascript
+    var myFunc = function() { console.log(this.name + ' ran.'); };
+    var myContext = {name: 'debounce'};
+
+    Ember.run.debounce(myContext, myFunc, 150);
+
+    // less than 150ms passes
+
+    Ember.run.debounce(myContext, myFunc, 150);
+
+    // 150ms passes
+    // myFunc is invoked with context myContext
+    // console logs 'debounce ran.' one time.
+  ```
+
+  @method debounce
+  @param {Object} [target] target of method to invoke
+  @param {Function|String} method The method to invoke.
+    May be a function or a string. If you pass a string
+    then it will be looked up on the passed target.
+  @param {Object} [args*] Optional arguments to pass to the timeout.
+  @param {Number} wait Number of milliseconds to wait.
+  @return {void}
+*/
+Ember.run.debounce = function() {
+  return backburner.debounce.apply(backburner, arguments);
 };
 
 // Make sure it's not an autorun during testing

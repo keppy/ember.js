@@ -228,7 +228,7 @@ define("backburner",
       },
 
       cancel: function(timer) {
-        if (typeof timer === 'object' && timer.queue && timer.method) { // we're cancelling a deferOnce
+        if (timer && typeof timer === 'object' && timer.queue && timer.method) { // we're cancelling a deferOnce
           return timer.queue.cancel(timer);
         } else if (typeof timer === 'function') { // we're cancelling a setTimeout
           for (var i = 0, l = timers.length; i < l; i += 2) {
@@ -237,6 +237,8 @@ define("backburner",
               return true;
             }
           }
+        } else {
+          return; // timer was null or not a timer
         }
       }
     };
@@ -329,7 +331,7 @@ define("backburner/deferred_action_queues",
         while (queueNameIndex < numberOfQueues) {
           queueName = queueNames[queueNameIndex];
           queue = queues[queueName];
-          queueItems = queue._queue.slice();
+          queueItems = queue._queueBeingFlushed = queue._queue.slice();
           queue._queue = [];
 
           var options = queue.options,
@@ -347,15 +349,19 @@ define("backburner/deferred_action_queues",
 
             if (typeof method === 'string') { method = target[method]; }
 
-            // TODO: error handling
-            if (args && args.length > 0) {
-              method.apply(target, args);
-            } else {
-              method.call(target);
+            // method could have been nullified / canceled during flush
+            if (method) {
+              // TODO: error handling
+              if (args && args.length > 0) {
+                method.apply(target, args);
+              } else {
+                method.call(target);
+              }
             }
 
             queueIndex += 4;
           }
+          queue._queueBeingFlushed = null;
           if (numberOfQueueItems && after) { after(); }
 
           if ((priorQueueNameIndex = indexOfPriorQueueWithActions(this, queueNameIndex)) !== -1) {
@@ -379,6 +385,7 @@ define("backburner/deferred_action_queues",
 
       return -1;
     }
+
 
     __exports__.DeferredActionQueues = DeferredActionQueues;
   });
@@ -469,8 +476,27 @@ define("backburner/queue",
             return true;
           }
         }
+
+        // if not found in current queue
+        // could be in the queue that is being flushed
+        queue = this._queueBeingFlushed;
+        if (!queue) {
+          return;
+        }
+        for (i = 0, l = queue.length; i < l; i += 4) {
+          currentTarget = queue[i];
+          currentMethod = queue[i+1];
+
+          if (currentTarget === actionToCancel.target && currentMethod === actionToCancel.method) {
+            // don't mess with array during flush
+            // just nullify the method
+            queue[i+1] = null;
+            return true;
+          }
+        }
       }
     };
+
 
     __exports__.Queue = Queue;
   });
