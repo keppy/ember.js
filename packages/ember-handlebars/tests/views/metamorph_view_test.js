@@ -52,22 +52,6 @@ test("a Metamorph view is not a view's parentView", function() {
   equal(children.objectAt(0), childView, "... and it is not the metamorph");
 });
 
-test("a Metamorph view is removed from its parent when clearRenderedChildren is called on the parent.", function() {
-  metamorphView = Ember._MetamorphView.create({
-    render: function(buffer) {
-      buffer.push("<h2>Meta</h2>");
-    }
-  });
-
-  Ember.run(function() {
-    view.appendTo("#qunit-fixture");
-    view.clearRenderedChildren();
-  });
-  
-  equal(get(view, 'childViews.length'), 0, 'parent has no children'); 
-  equal(metamorphView.isDestroyed, true, 'metamorphView is destroyed');
-});
-
 module("Metamorph views correctly handle DOM", {
   setup: function() {
     view = Ember.View.create({
