@@ -253,3 +253,18 @@ test("bound helpers should not be invoked with blocks", function() {
   }, /registerBoundHelper-generated helpers do not support use with Handlebars blocks/i);
 });
 
+test("bound helpers should be removed from parents when clearRenderedChildren() is called by the parent", function() {
+  registerRepeatHelper();
+  view = Ember.View.create({
+    controller: Ember.Object.create({name: "brogrammer"}),
+    template: Ember.Handlebars.compile('{{bind name tagname="strong"}}')
+  });
+
+  appendView();
+
+  Ember.run(function () {
+    view.clearRenderedChildren();
+  });
+
+  equal(view.$().text(), '', "... and the view has no rendered child");
+});

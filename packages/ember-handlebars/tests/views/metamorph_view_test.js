@@ -214,6 +214,22 @@ test("trigger rerender of parent and SimpleHandlebarsView", function () {
   });
 });
 
+test("calling clearRenderedChildren() on the parent should remove the parent's children", function () {
+  var view = Ember.View.create({
+    show: true,
+    foo: 'bar',
+    template: Ember.Handlebars.compile("{{#if view.show}}{{#if view.foo}}{{view.foo}}{{/if}}{{/if}}")
+  });
+
+  Ember.run(function(){ view.appendTo('#qunit-fixture'); });
+
+  Ember.run(function(){ view.clearRenderedChildren(); });
+
+  var children = get(view, 'childViews');
+
+  equal(get(children, 'length'), 0, "There is no child of the view");
+});
+
 test("re-rendering and then changing the property does not raise an exception", function() {
   view = Ember.View.create({
     show: true,
