@@ -16,8 +16,11 @@ var childViewsProperty = Ember.computed(function() {
   var childViews = this._childViews, ret = Ember.A(), view = this;
 
   a_forEach(childViews, function(view) {
+    var currentChildViews;
     if (view.isVirtual) {
-      ret.pushObjects(get(view, 'childViews'));
+      if (currentChildViews = get(view, 'childViews')) {
+        ret.pushObjects(currentChildViews);
+      }
     } else {
       ret.push(view);
     }
@@ -312,8 +315,8 @@ class:
   MyView = Ember.View.extend({
     classNameBindings: ['propertyA', 'propertyB'],
     propertyA: 'from-a',
-    propertyB: function(){
-      if(someLogic){ return 'from-b'; }
+    propertyB: function() {
+      if (someLogic) { return 'from-b'; }
     }.property()
   });
   ```
@@ -494,7 +497,7 @@ class:
   MyTextInput = Ember.View.extend({
     tagName: 'input',
     attributeBindings: ['disabled'],
-    disabled: function(){
+    disabled: function() {
       if (someLogic) {
         return true;
       } else {
@@ -603,7 +606,7 @@ class:
 
   aController = Ember.Object.create({
     firstName: 'Barry',
-    excitedGreeting: function(){
+    excitedGreeting: function() {
       return this.get("content.firstName") + "!!!"
     }.property()
   });
@@ -674,7 +677,7 @@ class:
 
   ```javascript
   AView = Ember.View.extend({
-    click: function(event){
+    click: function(event) {
       // will be called when when an instance's
       // rendered element is clicked
     }
@@ -695,7 +698,7 @@ class:
   ```javascript
   AView = Ember.View.extend({
     eventManager: Ember.Object.create({
-      doubleClick: function(event, view){
+      doubleClick: function(event, view) {
         // will be called when when an instance's
         // rendered element or any rendering
         // of this views's descendent
@@ -710,11 +713,11 @@ class:
 
   ```javascript
   AView = Ember.View.extend({
-    mouseEnter: function(event){
+    mouseEnter: function(event) {
       // will never trigger.
     },
     eventManager: Ember.Object.create({
-      mouseEnter: function(event, view){
+      mouseEnter: function(event, view) {
         // takes presedence over AView#mouseEnter
       }
     })
@@ -732,7 +735,7 @@ class:
   OuterView = Ember.View.extend({
     template: Ember.Handlebars.compile("outer {{#view InnerView}}inner{{/view}} outer"),
     eventManager: Ember.Object.create({
-      mouseEnter: function(event, view){
+      mouseEnter: function(event, view) {
         // view might be instance of either
         // OuterView or InnerView depending on
         // where on the page the user interaction occured
@@ -741,12 +744,12 @@ class:
   });
 
   InnerView = Ember.View.extend({
-    click: function(event){
+    click: function(event) {
       // will be called if rendered inside
       // an OuterView because OuterView's
       // eventManager doesn't handle click events
     },
-    mouseEnter: function(event){
+    mouseEnter: function(event) {
       // will never be called if rendered inside
       // an OuterView.
     }
@@ -1057,7 +1060,7 @@ Ember.View = Ember.CoreView.extend(
     var view = get(this, 'parentView');
 
     while (view) {
-      if(view instanceof klass) { return view; }
+      if (view instanceof klass) { return view; }
       view = get(view, 'parentView');
     }
   },
@@ -1078,7 +1081,7 @@ Ember.View = Ember.CoreView.extend(
                    function(view) { return klass.detect(view.constructor); };
 
     while (view) {
-      if( isOfType(view) ) { return view; }
+      if (isOfType(view)) { return view; }
       view = get(view, 'parentView');
     }
   },
@@ -1111,7 +1114,7 @@ Ember.View = Ember.CoreView.extend(
     var view = get(this, 'parentView');
 
     while (view) {
-      if(get(view, 'parentView') instanceof klass) { return view; }
+      if (get(view, 'parentView') instanceof klass) { return view; }
       view = get(view, 'parentView');
     }
   },
@@ -2221,7 +2224,7 @@ Ember.View = Ember.CoreView.extend(
     }
 
     var view = this,
-        stateCheckedObserver = function(){
+        stateCheckedObserver = function() {
           view.currentState.invokeObserver(this, observer);
         },
         scheduledObserver = function() {

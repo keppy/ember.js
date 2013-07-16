@@ -402,7 +402,7 @@ Ember.computed = function(func) {
     func = a_slice.call(arguments, -1)[0];
   }
 
-  if ( typeof func !== "function" ) {
+  if (typeof func !== "function") {
     throw new Error("Computed Property declared without a property function");
   }
 
@@ -492,7 +492,7 @@ registerComputed('notEmpty', function(dependentKey) {
   @for Ember
   @param {String} dependentKey
   @return {Ember.ComputedProperty} computed property which
-  rturns true if original value for property is null or undefined.
+  returns true if original value for property is null or undefined.
 */
 registerComputed('none', function(dependentKey) {
   return Ember.isNone(get(this, dependentKey));
@@ -670,7 +670,7 @@ registerComputedWithProperties('map', function(properties) {
   alias to the original value for property.
 */
 Ember.computed.alias = function(dependentKey) {
-  return Ember.computed(dependentKey, function(key, value){
+  return Ember.computed(dependentKey, function(key, value) {
     if (arguments.length > 1) {
       set(this, dependentKey, value);
       return value;
